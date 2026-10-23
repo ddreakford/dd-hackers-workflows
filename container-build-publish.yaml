@@ -1,0 +1,56 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: container-build-publish
+
+on:
+  workflow_call:
+    inputs:
+      appName:
+        type: string
+        required: true
+      versionStart:
+        type: string
+        required: false
+        default: "3.0"
+      repo:
+        type: string
+        required: true
+
+permissions:
+  scm-token-own: read
+  scm-token-org: read
+
+jobs:
+  build:
+    steps:
+      - uses: cloudbees-io/checkout@v1
+        name: Get source code
+        with:
+          repository: ${{ inputs.repo }}
+
+      - name: Authenticate to Docker Hub
+        uses: cloudbees-io/configure-oci-credentials@v1
+        with:
+          registry: https://index.docker.io/v1/
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: cloudbees-io/kaniko@v1
+        name: Build container image
+        kind: build
+        with:
+          destination: docker.io/${{ vars.DOCKERHUB_NAMESPACE }}/${{ inputs.appName }}:${{ inputs.versionStart }}-${{ cloudbees.version }}
+          tar-path: container-image.tar
+          build-args: BUILDKIT_CONTEXT_KEEP_GIT_DIR=1,BUILDKIT_INLINE_CACHE=1
+          artifact-name: ${{ inputs.appName }}
+
+      - name: Publish evidence
+        uses: cloudbees-io/publish-evidence-item@v1
+        with:
+          content: |-
+            ## Built and pushed image to Docker Hub
+
+            [Docker Hub](https://hub.docker.com/r/${{ vars.DOCKERHUB_NAMESPACE }}/${{ inputs.appName }}/tags)
+
+            Published docker.io/${{ vars.DOCKERHUB_NAMESPACE }}/${{ inputs.appName }}:${{ inputs.versionStart }}-${{ cloudbees.version }}
+          format: MARKDOWN
