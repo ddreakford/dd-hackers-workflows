@@ -34,5 +34,5 @@ Example:
     with:
       appName: dd-hackers-auth
       versionStart: "2.0"
-      repo: ddreakford/dd-hackers-auth
+      repo: ddreakford/hackers-auth
 ```
