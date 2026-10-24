@@ -32,7 +32,7 @@ Example:
     vars: inherit
     secrets: inherit
     with:
-      appName: dd-hackers-auth
+      appName: hackers-auth
       versionStart: "2.0"
-      repo: ddreakford/hackers-auth
+      repo: ddreakford/dd-hackers-auth
 ```
