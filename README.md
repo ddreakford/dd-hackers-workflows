@@ -27,7 +27,7 @@ be defined in Unify:
 Example:
 
 ```yaml
-  build:
+  container_build_publish:
     uses: ddreakford/dd-hackers-workflows/container-build-publish.yaml
     vars: inherit
     secrets: inherit
