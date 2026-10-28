@@ -23,10 +23,10 @@ permissions:
 jobs:
   build:
     steps:
-      - uses: cloudbees-io/checkout@v1
+      - uses: cloudbees-io/checkout@v2
         name: Get source code
         with:
-          repository: ${{ inputs.repo }}
+          repository: https://github.com/${{ inputs.repo }}
 
       - name: Authenticate to Docker Hub
         uses: cloudbees-io/configure-oci-credentials@v1
